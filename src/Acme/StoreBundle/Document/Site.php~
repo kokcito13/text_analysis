@@ -1,0 +1,31 @@
+<?php
+namespace Acme\StoreBundle\Document;
+
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Acme\StoreBundle\Document\Url;
+
+/**
+ * @MongoDB\Document
+ */
+class Site
+{
+    /**
+     * @MongoDB\Id
+     */
+    protected $id;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $name;
+
+    /**
+     * @MongoDB\Timestamp
+     */
+    protected $createdAt;
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Url", mappedBy="site")
+     */
+    protected $urls;
+}

@@ -2,6 +2,9 @@
 
 namespace Acme\StoreBundle\Controller;
 
+use Acme\StoreBundle\Document\Site;
+use Acme\StoreBundle\Document\Task;
+use Acme\StoreBundle\Document\Url;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -24,12 +27,12 @@ class DefaultController extends Controller
 //        $product->setName($name);
 //        $product->setPrice('19.'.rand(10,99));
 
-//        $dm = $this->get('doctrine_mongodb')->getManager();
+        $dm = $this->get('doctrine_mongodb')->getManager();
 //        $dm->persist($product);
 //        $dm->flush();
 
-//        $dm = $this->get('doctrine_mongodb')->getManager();
-//        $product = $dm->getRepository('AcmeStoreBundle:Product')->findByPrice(19.92);
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $tasks = $dm->getRepository('AcmeStoreBundle:Task')->findAll();
 
         $arrayData = array(
             array(
@@ -68,13 +71,15 @@ class DefaultController extends Controller
             ),
         ));
 
-        @$res = file_get_contents('http://analise.lc/app_dev.php/take_info', true, $context);
-        if (!isset($res) || !$res) {
-            $res = 'Cann\'t conect';
-        }
+        $res = file_get_contents('http://analise.lc/app_dev.php/take_info', true, $context);
+//        if (!isset($res) || !$res) {
+//            $res = 'Cann\'t conect';
+//        }
 
         echo '<pre>';
-        var_dump(json_decode($res,true));
+        var_dump($res);
+        var_dump(count($tasks));
+
         exit;
 
 
@@ -87,7 +92,41 @@ class DefaultController extends Controller
      */
     public function saveInfoAction(Request $request)
     {
+        $dm = $this->get('doctrine_mongodb')->getManager();
         $data = (array)$request->request->all();
+        foreach ($data as $value) {
+            $task = new Task();
+            $task->setOutId($value['id']);
+            $task->setKey($value['key']);
+            foreach ($value['urls'] as $url) {
+                $host = parse_url($url, PHP_URL_HOST);
+                $site = $dm->getRepository('AcmeStoreBundle:Site')->findOneByName($host);
+                if (!$site) {
+                    $site = new Site();
+                    $site->setName($host);
+                } else {
+                    $urlDocument = $site->findUrlByUri($url);
+                    if ($urlDocument) {
+                        $timeStamp = $urlDocument->getUpdatedAt();
+                        $timeTwoWeeks = time()-(14+24+3600);
+                        if ($timeTwoWeeks > $timeStamp->__toString()) {
+                            $urlDocument->setStatus(Url::STATUS_CREATE);
+                        }
+                    } else {
+                        $urlDocument = new Url();
+                        $urlDocument->setUri($url);
+                        $site->addUrl($urlDocument);
+                        $urlDocument->setSite($site);
+                    }
+                }
+                $urlDocument->setTask($task);
+                $task->addUrl($urlDocument);
+                $dm->persist($urlDocument);
+                $dm->persist($site);
+            }
+            $dm->persist($task);
+        }
+//        $dm->flush();
 
         return new JsonResponse($data);
     }

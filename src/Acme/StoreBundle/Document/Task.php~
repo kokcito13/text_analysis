@@ -1,0 +1,42 @@
+<?php
+namespace Acme\StoreBundle\Document;
+
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Acme\StoreBundle\Document\Url;
+use Acme\StoreBundle\Document\Site;
+
+/**
+ * @MongoDB\Document
+ */
+class Task
+{
+    /**
+     * @MongoDB\Id
+     */
+    protected $id;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $key;
+
+    /**
+     * @MongoDB\Timestamp
+     */
+    protected $createdAt;
+
+    /**
+     * @MongoDB\Int
+     */
+    protected $status;
+
+    /**
+     * @MongoDB\Int
+     */
+    protected $outId;
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Url", mappedBy="task")
+     */
+    protected $urls;
+}
