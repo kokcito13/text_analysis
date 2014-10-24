@@ -51,6 +51,8 @@ class Url
     protected $task;
 
     const STATUS_CREATE = 0;
+    const STATUS_WITH_HTML = 1;
+    const STATUS_WITH_CONTENT = 2;
 
     public function __construct()
     {
@@ -220,5 +222,12 @@ class Url
     public function getTask()
     {
         return $this->task;
+    }
+
+    public function updateTime()
+    {
+        $this->updatedAt = time();
+
+        return $this;
     }
 }

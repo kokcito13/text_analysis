@@ -80,3 +80,8 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+services:
+    urls.worker:
+        class: Acme\StoreBundle\Service\UrlsWorker
+        arguments: [ @doctrine_mongodb ]

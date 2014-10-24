@@ -32,8 +32,9 @@ class DefaultController extends Controller
 //        $dm->flush();
 
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $tasks = $dm->getRepository('AcmeStoreBundle:Task')->findAll();
+        $tasks = $dm->getRepository('AcmeStoreBundle:Url')->findBy(array('status'=>1));
 
+        /*
         $arrayData = array(
             array(
                 'id' => 1,
@@ -71,14 +72,17 @@ class DefaultController extends Controller
             ),
         ));
 
-        $res = file_get_contents('http://analise.lc/app_dev.php/take_info', true, $context);
-//        if (!isset($res) || !$res) {
-//            $res = 'Cann\'t conect';
-//        }
 
-        echo '<pre>';
-        var_dump($res);
-        var_dump(count($tasks));
+        $res = file_get_contents('http://analise.lc/app_dev.php/take_info', true, $context);
+
+        if (!isset($res) || !$res) {
+            $res = 'Cann\'t conect';
+        }
+        */
+
+//        echo '<pre>';
+//        var_dump($res);
+        echo $tasks[0]->getHtml();
 
         exit;
 
@@ -126,7 +130,7 @@ class DefaultController extends Controller
             }
             $dm->persist($task);
         }
-//        $dm->flush();
+        $dm->flush();
 
         return new JsonResponse($data);
     }
