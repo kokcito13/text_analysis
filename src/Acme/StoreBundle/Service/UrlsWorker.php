@@ -51,4 +51,47 @@ class UrlsWorker {
         }
         $this->dm->flush();
     }
+
+
+    public function getContent()
+    {
+        $urls =  $this->dm
+            ->createQueryBuilder('AcmeStoreBundle:Url')
+            ->field('status')->equals(Url::STATUS_WITH_HTML)
+            ->limit(10)
+            ->getQuery()
+            ->execute();
+
+        foreach ($urls as $url) { /** @var URl $url */
+            $uri = preg_replace('/https|http:\/\//iu','',$url->getUri());
+            $postData = http_build_query(
+                array(
+                    'url'=>$uri,
+                    'filter'=>'Отфильтровать текст'
+                )
+            );
+            $context = stream_context_create(array(
+                'http' => array(
+                    'method' => 'POST',
+                    'header' => 'Content-Type: application/x-www-form-urlencoded' . PHP_EOL,
+                    'content' => $postData,
+                ),
+            ));
+
+            sleep(5);
+            $res = file_get_contents('http://istio.com/rus/text/analyz/', true, $context);
+
+            $crawler = new Crawler();
+            $crawler->addContent($res, 'html');
+
+            $content = $crawler->filter('#mycontent')->text();
+
+            $url->setContent(str_replace(PHP_EOL, ' ', $content));
+            $url->setStatus(Url::STATUS_WITH_CONTENT);
+            $this->dm->persist($url);
+
+            echo $url->getId().',';
+        }
+        $this->dm->flush();
+    }
 } 

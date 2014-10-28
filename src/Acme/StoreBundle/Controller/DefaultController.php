@@ -132,4 +132,40 @@ class DefaultController extends Controller
 
         return new JsonResponse($data);
     }
+
+
+    /**
+     * @Route("/istio/{name}")
+     * @Template()
+     */
+    public function istioAction($name)
+    {
+
+        $postData = http_build_query(
+            array(
+                'url'=>'www.tiensmed.ru/news/varikocele-wkti',
+                'filter'=>'Отфильтровать текст'
+            )
+        );
+        $context = stream_context_create(array(
+            'http' => array(
+                'method' => 'POST',
+                'header' => 'Content-Type: application/x-www-form-urlencoded' . PHP_EOL,
+                'content' => $postData,
+            ),
+        ));
+
+
+        $res = file_get_contents('http://istio.com/rus/text/analyz/', true, $context);
+
+        $crawler = new Crawler();
+        $crawler->addContent($res, 'html');
+
+        $content = $crawler->filter('#mycontent')->text();
+
+        echo '<pre>';
+        var_dump(str_replace(PHP_EOL, ' ', $content));
+        exit;
+
+    }
 }

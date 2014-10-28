@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class UpdateUrlsHtmlCommand extends Command
+class UpdateUrlsContentCommand extends Command
 {
     /**
      * {@inheritdoc}
@@ -16,8 +16,8 @@ class UpdateUrlsHtmlCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('urls:get:html')
-            ->setDescription('get html from url');
+            ->setName('urls:get:content')
+            ->setDescription('get content from url');
     }
 
     /**
@@ -27,6 +27,6 @@ class UpdateUrlsHtmlCommand extends Command
     {
         /** @var UrlsWorker $urlsWorker */
         $urlsWorker = $this->getApplication()->getKernel()->getContainer()->get('urls.worker');
-        $urlsWorker->getHtml();
+        $urlsWorker->getContent();
     }
 }

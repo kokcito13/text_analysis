@@ -1,3 +1,5 @@
 Прасим html страницы по урл ставим статус 1 записываем html
 php app/console urls:get:html
 
+Прасим контент страницы по урл с сервиса istio.com ставим статус 2 записываем контент
+php app/console urls:get:content
