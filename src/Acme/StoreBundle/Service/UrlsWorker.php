@@ -10,6 +10,7 @@ namespace Acme\StoreBundle\Service;
 
 
 use Acme\StoreBundle\Document\Url;
+use Symfony\Component\DomCrawler\Crawler;
 
 class UrlsWorker {
 
@@ -25,21 +26,29 @@ class UrlsWorker {
         $urls =  $this->dm
             ->createQueryBuilder('AcmeStoreBundle:Url')
             ->field('status')->equals(Url::STATUS_CREATE)
-            ->limit(1)
+            ->limit(10)
             ->getQuery()
             ->execute();
 
         foreach ($urls as $url) { /** @var URl $url */
-            $page = file_get_contents($url->getUri());
-            $page = mb_convert_encoding($page, "UTF-8");
-            $url->setHtml($page);
+            $context = stream_context_create(array(
+                'http' => array(
+                    'method' => 'GET',
+                    'header' => 'Content-Type: application/x-www-form-urlencoded' . PHP_EOL,
+                    'timeout' => 120
+                ),
+            ));
+            $res = file_get_contents($url->getUri(), false, $context);
+
+            $crawler = new Crawler();
+            $crawler->addContent($res, 'html');
+
+            $url->setHtml($crawler->html());
             $url->setStatus(Url::STATUS_WITH_HTML);
             $this->dm->persist($url);
+
+            echo $url->getId().',';
         }
         $this->dm->flush();
-
-//        echo '<pre>';
-//        var_dump($page);
-//        exit;
     }
 } 

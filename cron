@@ -1,0 +1,3 @@
+Прасим html страницы по урл ставим статус 1 записываем html
+php app/console urls:get:html
+

@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Acme\StoreBundle\Document\Product;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +33,7 @@ class DefaultController extends Controller
 //        $dm->flush();
 
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $tasks = $dm->getRepository('AcmeStoreBundle:Url')->findBy(array('status'=>1));
+        $tasks = $dm->getRepository('AcmeStoreBundle:Url')->findBy(array('id'=>$name));
 
         /*
         $arrayData = array(
@@ -80,12 +81,9 @@ class DefaultController extends Controller
         }
         */
 
-//        echo '<pre>';
-//        var_dump($res);
-        echo $tasks[0]->getHtml();
-
+        echo '<pre>';
+        var_dump($tasks[0]->getTitle());
         exit;
-
 
         return array();
     }

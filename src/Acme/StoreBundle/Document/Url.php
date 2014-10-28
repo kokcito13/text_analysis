@@ -4,6 +4,7 @@ namespace Acme\StoreBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Acme\StoreBundle\Document\Site;
 use Acme\StoreBundle\Document\Task;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @MongoDB\Document
@@ -229,5 +230,17 @@ class Url
         $this->updatedAt = time();
 
         return $this;
+    }
+
+    public function getTitle()
+    {
+        $str = $this->getHtml();
+        $regexp = "<title.*>(.*)<\/title>";
+
+        if (preg_match_all("/$regexp/siU", $str, $matches)) {
+            return $matches[1][0];
+        } else {
+            return 'Not find Title';
+        }
     }
 }
