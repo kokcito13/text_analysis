@@ -2,6 +2,7 @@
 
 namespace Acme\StoreBundle\Controller;
 
+use Acme\StoreBundle\Document\MorphologyGroup;
 use Acme\StoreBundle\Document\Site;
 use Acme\StoreBundle\Document\Task;
 use Acme\StoreBundle\Document\Url;
@@ -28,7 +29,6 @@ class DefaultController extends Controller
 //        $product->setName($name);
 //        $product->setPrice('19.'.rand(10,99));
 
-        $dm = $this->get('doctrine_mongodb')->getManager();
 //        $dm->persist($product);
 //        $dm->flush();
 
@@ -167,5 +167,26 @@ class DefaultController extends Controller
         var_dump(str_replace(PHP_EOL, ' ', $content));
         exit;
 
+    }
+
+    /**
+     * @Route("/morph/{id}")
+     * @Template()
+     */
+    public function morphAction($id)
+    {
+//        $morf = new MorphologyGroup();
+//        $morf->setKey('test1111');
+//        $morf->setKeys(json_encode(array('somesing')));
+
+        $dm = $this->get('doctrine_mongodb')->getManager();
+//        $dm->persist($morf);
+//        $dm->flush();
+
+        $morf = $dm->getRepository('AcmeStoreBundle:MorphologyGroup')->find($id);
+
+        echo '<pre>';
+        var_dump($morf->getKeys());
+        exit;
     }
 }

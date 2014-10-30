@@ -28,6 +28,6 @@ class GetMorphologyCommand extends Command
     {
         /** @var Morphology $urlsWorker */
         $urlsWorker = $this->getApplication()->getKernel()->getContainer()->get('morphology');
-        $urlsWorker->getWords('бег');
+        $urlsWorker->getGroup();
     }
 }

@@ -3,3 +3,6 @@ php app/console urls:get:html
 
 Прасим контент страницы по урл с сервиса istio.com ставим статус 2 записываем контент
 php app/console urls:get:content
+
+Собираем морфологическую групу для ключей задания
+php app/console mor:get:word
