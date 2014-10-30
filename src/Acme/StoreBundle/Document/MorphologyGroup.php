@@ -1,0 +1,185 @@
+<?php
+namespace Acme\StoreBundle\Document;
+
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Acme\StoreBundle\Document\Url;
+use Acme\StoreBundle\Document\Site;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Acme\StoreBundle\Document\Task;
+
+/**
+ * @MongoDB\Document
+ */
+class MorphologyGroup
+{
+    /**
+     * @MongoDB\Id
+     */
+    protected $id;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $key;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $keys;
+
+    /**
+     * @MongoDB\Timestamp
+     */
+    protected $createdAt;
+
+    /**
+     * @MongoDB\Int
+     */
+    protected $status;
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Task", mappedBy="morphologyGroup")
+     */
+    protected $tasks;
+
+    const DEFAULT_IN = 0;
+
+    const URLS_PARSE_FINISH = 1;
+
+    public function __construct()
+    {
+        $this->tasks = new ArrayCollection();
+        $this->createdAt = time();
+
+        $this->status = self::DEFAULT_IN;
+    }
+
+    /**
+     * Get id
+     *
+     * @return id $id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set key
+     *
+     * @param string $key
+     * @return self
+     */
+    public function setKey($key)
+    {
+        $this->key = $key;
+        return $this;
+    }
+
+    /**
+     * Get key
+     *
+     * @return string $key
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * Set createdAt
+     *
+     * @param timestamp $createdAt
+     * @return self
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return timestamp $createdAt
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set status
+     *
+     * @param int $status
+     * @return self
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return int $status
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Add task
+     *
+     * @param Task $task
+     */
+    public function addTask(Task $task)
+    {
+        $this->tasks[] = $task;
+    }
+
+    /**
+     * Remove task
+     *
+     * @param Task $task
+     */
+    public function removeTask(Task $task)
+    {
+        $this->tasks->removeElement($task);
+    }
+
+    /**
+     * Get tasks
+     *
+     * @return Doctrine\Common\Collections\Collection $tasks
+     */
+    public function getTasks()
+    {
+        return $this->tasks;
+    }
+
+    /**
+     * Set keys
+     *
+     * @param string $keys
+     * @return self
+     */
+    public function setKeys($keys)
+    {
+        $this->keys = $keys;
+        return $this;
+    }
+
+    /**
+     * Get keys
+     *
+     * @return string $keys
+     */
+    public function getKeys()
+    {
+        return $this->keys;
+    }
+}

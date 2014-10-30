@@ -4,6 +4,7 @@ namespace Acme\StoreBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Acme\StoreBundle\Document\Url;
 use Acme\StoreBundle\Document\Site;
+use Acme\StoreBundle\Document\MorphologyGroup;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -35,6 +36,16 @@ class Task
     /**
      * @MongoDB\Int
      */
+    protected $status_morphology;
+
+    /**
+     * @MongoDB\Int
+     */
+    protected $status_urls;
+
+    /**
+     * @MongoDB\Int
+     */
     protected $outId;
 
     /**
@@ -42,7 +53,19 @@ class Task
      */
     protected $urls;
 
+    /**
+     * @MongoDB\ReferenceOne(targetDocument="MorphologyGroup", inversedBy="task")
+     */
+    protected $morphologyGroup;
+
+    const DEFAULT_IN = 0;
+
     const STATUS_CREATE = 0;
+    const STATUS_DONE = 1;
+
+    const MORPHOLOGY_DONE = 1;
+
+    const URLS_PARSE_FINISH = 1;
 
     public function __construct()
     {
@@ -50,6 +73,8 @@ class Task
         $this->createdAt = time();
 
         $this->status = self::STATUS_CREATE;
+        $this->status_morphology = self::DEFAULT_IN;
+        $this->status_urls = self::DEFAULT_IN;
     }
     
     /**
@@ -178,5 +203,71 @@ class Task
     public function getUrls()
     {
         return $this->urls;
+    }
+
+    /**
+     * Set statusMorphology
+     *
+     * @param int $statusMorphology
+     * @return self
+     */
+    public function setStatusMorphology($statusMorphology)
+    {
+        $this->status_morphology = $statusMorphology;
+        return $this;
+    }
+
+    /**
+     * Get statusMorphology
+     *
+     * @return int $statusMorphology
+     */
+    public function getStatusMorphology()
+    {
+        return $this->status_morphology;
+    }
+
+    /**
+     * Set statusUrls
+     *
+     * @param int $statusUrls
+     * @return self
+     */
+    public function setStatusUrls($statusUrls)
+    {
+        $this->status_urls = $statusUrls;
+        return $this;
+    }
+
+    /**
+     * Get statusUrls
+     *
+     * @return int $statusUrls
+     */
+    public function getStatusUrls()
+    {
+        return $this->status_urls;
+    }
+
+    /**
+     * Set morphologyGroup
+     *
+     * @param MorphologyGroup $morphologyGroup
+     * @return self
+     */
+    public function setMorphologyGroup(MorphologyGroup $morphologyGroup)
+    {
+        $this->morphologyGroup = $morphologyGroup;
+        return $this;
+    }
+
+    /**
+     * Get morphologyGroup
+     *
+     * @return MorphologyGroup $morphologyGroup
+     */
+    public function getMorphologyGroup()
+    {
+        return $this->morphologyGroup;
     }
 }
