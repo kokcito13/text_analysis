@@ -54,6 +54,11 @@ class Task
     protected $textLength;
 
     /**
+     * @MongoDB\Int
+     */
+    protected $countKey;
+
+    /**
      * @MongoDB\ReferenceMany(targetDocument="Url", mappedBy="task")
      */
     protected $urls;
@@ -66,7 +71,9 @@ class Task
     const DEFAULT_IN = 0;
 
     const STATUS_CREATE = 0;
-    const STATUS_DONE = 1;
+    const STATUS_SAVE_TEXT_LENGTH = 1;
+    const STATUS_SAVE_COUNT_KEY = 2;
+    const STATUS_DONE = 9;
 
     const MORPHOLOGY_DONE = 1;
 
@@ -78,6 +85,7 @@ class Task
         $this->createdAt = time();
 
         $this->textLength = 0;
+        $this->countKey = 0;
 
         $this->status = self::STATUS_CREATE;
         $this->status_morphology = self::DEFAULT_IN;
@@ -310,5 +318,27 @@ class Task
     public function getTextLength()
     {
         return $this->textLength;
+    }
+
+    /**
+     * Set countKey
+     *
+     * @param int $countKey
+     * @return self
+     */
+    public function setCountKey($countKey)
+    {
+        $this->countKey = $countKey;
+        return $this;
+    }
+
+    /**
+     * Get countKey
+     *
+     * @return int $countKey
+     */
+    public function getCountKey()
+    {
+        return $this->countKey;
     }
 }

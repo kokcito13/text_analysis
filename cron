@@ -6,3 +6,6 @@ php app/console urls:get:content
 
 Собираем морфологическую групу для ключей задания
 php app/console mor:get:word
+
+Определяем длинну текста и количество точных вхождений ключа
+php app/console task:update
