@@ -49,6 +49,11 @@ class Task
     protected $outId;
 
     /**
+     * @MongoDB\Int
+     */
+    protected $textLength;
+
+    /**
      * @MongoDB\ReferenceMany(targetDocument="Url", mappedBy="task")
      */
     protected $urls;
@@ -71,6 +76,8 @@ class Task
     {
         $this->urls = new ArrayCollection();
         $this->createdAt = time();
+
+        $this->textLength = 0;
 
         $this->status = self::STATUS_CREATE;
         $this->status_morphology = self::DEFAULT_IN;
@@ -205,6 +212,18 @@ class Task
         return $this->urls;
     }
 
+    public function getUrlsWithContent()
+    {
+        $arr = array();
+        foreach ($this->getUrls() as $url) {
+            if ($url->getStatus() == Url::STATUS_WITH_CONTENT) {
+                $arr[] = $url;
+            }
+        }
+
+        return $arr;
+    }
+
     /**
      * Set statusMorphology
      *
@@ -269,5 +288,27 @@ class Task
     public function getMorphologyGroup()
     {
         return $this->morphologyGroup;
+    }
+
+    /**
+     * Set textLength
+     *
+     * @param int $textLength
+     * @return self
+     */
+    public function setTextLength($textLength)
+    {
+        $this->textLength = $textLength;
+        return $this;
+    }
+
+    /**
+     * Get textLength
+     *
+     * @return int $textLength
+     */
+    public function getTextLength()
+    {
+        return $this->textLength;
     }
 }

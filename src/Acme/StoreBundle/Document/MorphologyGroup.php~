@@ -160,4 +160,26 @@ class MorphologyGroup
     {
         return $this->tasks;
     }
+
+    /**
+     * Set keys
+     *
+     * @param string $keys
+     * @return self
+     */
+    public function setKeys($keys)
+    {
+        $this->keys = $keys;
+        return $this;
+    }
+
+    /**
+     * Get keys
+     *
+     * @return string $keys
+     */
+    public function getKeys()
+    {
+        return $this->keys;
+    }
 }
