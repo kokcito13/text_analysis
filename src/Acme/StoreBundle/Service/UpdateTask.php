@@ -29,6 +29,7 @@ class UpdateTask {
         $this->updateStatusUrls();
         $this->setLengthTextUrls();
         $this->setCountKey();
+        $this->setMorphologyKeys();
     }
 
     public function updateStatusUrls()
@@ -89,6 +90,53 @@ class UpdateTask {
         $this->dm->flush();
     }
 
+    public function setMorphologyKeys()
+    {
+        $qb =  $this->dm
+            ->createQueryBuilder('AcmeStoreBundle:Task')
+            ->field('status')->equals(Task::STATUS_SAVE_COUNT_KEY)
+            ->field('status_urls')->equals(Task::URLS_PARSE_FINISH)
+            ->field('status_morphology')->equals(Task::MORPHOLOGY_DONE)
+            ->limit(10);
+
+        $tasks = $qb->getQuery()->execute();
+        foreach ($tasks as $task) {/** @var Task $task */
+            $keysCount = array();
+            $morphologuGroup = $task->getMorphologyGroup();
+            if ($morphologuGroup) {
+                $keys = $morphologuGroup->getKeysAsArray();
+                if (!empty($keys)) {
+                    foreach ($keys as $k=>$key) {
+                        if ($key != $task->getKey()) {
+                            $counts = $this->getCountsKey($task->getUrls(), $key);
+                            if ($counts < 1) {
+                                continue;
+                            }
+                            $keysCount[] = array(
+                                'key' => $key,
+                                'count' => $counts
+                            );
+                        }
+                    }
+                } else {
+                    echo '<pre>';
+                    var_dump('fuck - '. $morphologuGroup->getId());
+                    exit;
+                }
+            } else {
+                echo '<pre>';
+                var_dump('fuck');
+                exit;
+            }
+
+            $task->setDilutedKeys(json_encode($keysCount));
+            $task->setStatus(Task::STATUS_SAVE_COUNTS_KEYS);
+            $this->dm->persist($task);
+        }
+
+        $this->dm->flush();
+    }
+
     public function getCountsKey($urls, $key)
     {
         $length = array();
@@ -142,6 +190,9 @@ class UpdateTask {
 
     private function makeRegInSideKey($key)
     {
+        $key = mb_strtolower($key, 'utf8');
+        $key = str_replace('ё', 'е', $key);
+
         $newKey = '';
         $partKey = explode(' ', $key);
         foreach($partKey as $kk=>$vv) {
@@ -154,6 +205,7 @@ class UpdateTask {
         if (empty($newKey)) {
             $newKey = $key;
         }
+
         return $newKey;
     }
 }

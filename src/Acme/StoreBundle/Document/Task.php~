@@ -24,6 +24,16 @@ class Task
     protected $key;
 
     /**
+     * @MongoDB\String
+     */
+    protected $helpKeys;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $dilutedKeys;
+
+    /**
      * @MongoDB\Timestamp
      */
     protected $createdAt;
@@ -318,5 +328,27 @@ class Task
     public function getTextLength()
     {
         return $this->textLength;
+    }
+
+    /**
+     * Set countKey
+     *
+     * @param int $countKey
+     * @return self
+     */
+    public function setCountKey($countKey)
+    {
+        $this->countKey = $countKey;
+        return $this;
+    }
+
+    /**
+     * Get countKey
+     *
+     * @return int $countKey
+     */
+    public function getCountKey()
+    {
+        return $this->countKey;
     }
 }

@@ -24,6 +24,16 @@ class Task
     protected $key;
 
     /**
+     * @MongoDB\String
+     */
+    protected $helpKeys;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $dilutedKeys;
+
+    /**
      * @MongoDB\Timestamp
      */
     protected $createdAt;
@@ -73,6 +83,7 @@ class Task
     const STATUS_CREATE = 0;
     const STATUS_SAVE_TEXT_LENGTH = 1;
     const STATUS_SAVE_COUNT_KEY = 2;
+    const STATUS_SAVE_COUNTS_KEYS = 3;
     const STATUS_DONE = 9;
 
     const MORPHOLOGY_DONE = 1;
@@ -340,5 +351,49 @@ class Task
     public function getCountKey()
     {
         return $this->countKey;
+    }
+
+    /**
+     * Set helpKeys
+     *
+     * @param string $helpKeys
+     * @return self
+     */
+    public function setHelpKeys($helpKeys)
+    {
+        $this->helpKeys = $helpKeys;
+        return $this;
+    }
+
+    /**
+     * Get helpKeys
+     *
+     * @return string $helpKeys
+     */
+    public function getHelpKeys()
+    {
+        return $this->helpKeys;
+    }
+
+    /**
+     * Set dilutedKeys
+     *
+     * @param string $dilutedKeys
+     * @return self
+     */
+    public function setDilutedKeys($dilutedKeys)
+    {
+        $this->dilutedKeys = $dilutedKeys;
+        return $this;
+    }
+
+    /**
+     * Get dilutedKeys
+     *
+     * @return string $dilutedKeys
+     */
+    public function getDilutedKeys()
+    {
+        return $this->dilutedKeys;
     }
 }

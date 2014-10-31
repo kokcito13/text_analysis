@@ -182,4 +182,20 @@ class MorphologyGroup
     {
         return $this->keys;
     }
+
+    /**
+     * Get keys
+     *
+     * @return array $keys
+     */
+    public function getKeysAsArray()
+    {
+        $keys = array();
+        $currentKeys = $this->getKeys();
+        if ($currentKeys && !empty($currentKeys)) {
+            $keys = json_decode($currentKeys, true);
+        }
+
+        return $keys;
+    }
 }
