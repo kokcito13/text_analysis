@@ -26,6 +26,8 @@ class Morphology {
 
     public function getGroup()
     {
+        echo $this->morphologyUrl;
+
         $qb =  $this->dm
             ->createQueryBuilder('AcmeStoreBundle:Task');
         $qb->addOr($qb->expr()->field('status_morphology')->equals(Task::DEFAULT_IN));
