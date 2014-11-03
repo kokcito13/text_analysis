@@ -189,4 +189,14 @@ class DefaultController extends Controller
         var_dump($morf->getKeys());
         exit;
     }
+
+
+    /**
+     * @Route("/hello")
+     * @Template()
+     */
+    public function helloAction()
+    {
+        return array();
+    }
 }
