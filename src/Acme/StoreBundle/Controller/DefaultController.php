@@ -192,7 +192,7 @@ class DefaultController extends Controller
 
 
     /**
-     * @Route("/hello_hh, name="sample_page_hello")
+     * @Route("/hello_hh", name="sample_page_hello")
      * @Template()
      */
     public function helloAction()
