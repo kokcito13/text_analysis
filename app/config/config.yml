@@ -87,7 +87,7 @@ services:
         arguments: [ @doctrine_mongodb ]
     morphology:
         class: Acme\StoreBundle\Service\Morphology
-        arguments: [ @doctrine_mongodb ]
+        arguments: [ @doctrine_mongodb, "%url_morf%" ]
     update.task:
         class: Acme\StoreBundle\Service\UpdateTask
         arguments: [ @doctrine_mongodb ]

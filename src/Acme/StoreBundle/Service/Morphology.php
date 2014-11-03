@@ -17,9 +17,11 @@ class Morphology {
 
     private $morphologyUrl = 'http://kokcito.ddns.ukrtel.net/morf/?word=';
 
-    public function __construct($dm)
+    public function __construct($dm, $morphologyUrl = '')
     {
         $this->dm = $dm->getManager();
+        if (!empty($morphologyUrl))
+            $this->morphologyUrl = $morphologyUrl.'/?word=';
     }
 
     public function getGroup()
