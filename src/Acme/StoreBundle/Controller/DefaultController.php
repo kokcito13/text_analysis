@@ -190,7 +190,6 @@ class DefaultController extends Controller
         exit;
     }
 
-
     /**
      * @Route("/", name="sample_page_hello")
      * @Template()
@@ -201,4 +200,28 @@ class DefaultController extends Controller
 
         return array();
     }
+
+    /**
+     * @Route("/get/{id}", name="get_by_out_id")
+     */
+    public function getAction($id)
+    {
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $tasks = $dm->getRepository('AcmeStoreBundle:Task')->findBy(array('outId'=>(int)$id));
+
+        $result = array();
+        foreach ($tasks as $task) {/** @var Task $task */
+            $result[] = array (
+                'key' => $task->getKey(),
+                'status' => $task->getStatus()
+            );
+        }
+
+        echo '<pre>';
+        var_dump($result);
+        exit;
+
+        return new JsonResponse();
+    }
+
 }
