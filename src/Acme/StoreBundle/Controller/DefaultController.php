@@ -213,7 +213,9 @@ class DefaultController extends Controller
         foreach ($tasks as $task) {/** @var Task $task */
             $result[] = array (
                 'key' => $task->getKey(),
-                'status' => $task->getStatus()
+                'status' => $task->getStatus(),
+                'text_length' => $task->getTextLength(),
+                'count_key' => $task->getCountKey()
             );
         }
 
