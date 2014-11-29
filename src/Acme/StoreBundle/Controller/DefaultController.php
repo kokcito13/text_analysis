@@ -33,9 +33,9 @@ class DefaultController extends Controller
 //        $dm->flush();
 
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $tasks = $dm->getRepository('AcmeStoreBundle:Url')->findBy(array('id'=>$name));
+        $tasks = $dm->getRepository('AcmeStoreBundle:Url')->find();
 
-        /*
+/*
         $arrayData = array(
             array(
                 'id' => 1,
@@ -74,14 +74,15 @@ class DefaultController extends Controller
         ));
 
 
-        $res = file_get_contents('http://analise.lc/app_dev.php/take_info', true, $context);
+        $res = file_get_contents('http://analise.lc/app_dev.php/take_info', false, $context);
 
         if (!isset($res) || !$res) {
             $res = 'Cann\'t conect';
-        }
-        */
+        }*/
+
 
         echo '<pre>';
+//        var_dump($res);
         var_dump($tasks[0]->getTitle());
         exit;
 
@@ -96,16 +97,22 @@ class DefaultController extends Controller
     {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $data = (array)$request->request->all();
+
         foreach ($data as $value) {
             $task = new Task();
             $task->setOutId($value['id']);
             $task->setKey($value['key']);
             foreach ($value['urls'] as $url) {
+                $url = trim($url);
                 $host = parse_url($url, PHP_URL_HOST);
                 $site = $dm->getRepository('AcmeStoreBundle:Site')->findOneByName($host);
                 if (!$site) {
                     $site = new Site();
                     $site->setName($host);
+                    $urlDocument = new Url();
+                    $urlDocument->setUri($url);
+                    $site->addUrl($urlDocument);
+                    $urlDocument->setSite($site);
                 } else {
                     $urlDocument = $site->findUrlByUri($url);
                     if ($urlDocument) {
