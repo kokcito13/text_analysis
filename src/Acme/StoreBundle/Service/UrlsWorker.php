@@ -38,12 +38,16 @@ class UrlsWorker {
                     'timeout' => 120
                 ),
             ));
-            $res = file_get_contents($url->getUri(), false, $context);
 
-            $crawler = new Crawler();
-            $crawler->addContent($res, 'html');
+            $url->setHtml("NOT CORRECT URL");
+            if (filter_var($url->getUri(), FILTER_VALIDATE_URL)) {
+                $res = file_get_contents($url->getUri(), false, $context);
 
-            $url->setHtml($crawler->html());
+                $crawler = new Crawler();
+                $crawler->addContent($res, 'html');
+                $url->setHtml($crawler->html());
+            }
+
             $url->setStatus(Url::STATUS_WITH_HTML);
             $this->dm->persist($url);
 
@@ -66,8 +70,8 @@ class UrlsWorker {
             $uri = preg_replace('/https|http:\/\//iu','',$url->getUri());
             $postData = http_build_query(
                 array(
-                    'url'=>$uri,
-                    'filter'=>'Отфильтровать текст'
+                    'ParseTextForm[url]'=>$uri,
+                    'filter'=>'Фильтровать текст'
                 )
             );
             $context = stream_context_create(array(
@@ -84,7 +88,8 @@ class UrlsWorker {
             $crawler = new Crawler();
             $crawler->addContent($res, 'html');
 
-            $content = $crawler->filter('#mycontent')->text();
+            $content = $crawler->filter('#ContentForm_content')->text();
+            $content = preg_replace('\r','',$content);
 
             $url->setContent(str_replace(PHP_EOL, ' ', $content));
             $url->setStatus(Url::STATUS_WITH_CONTENT);

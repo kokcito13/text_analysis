@@ -97,7 +97,8 @@ class DefaultController extends Controller
     {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $data = (array)$request->request->all();
-
+        $resp = array();
+        try {
         foreach ($data as $value) {
             $task = new Task();
             $task->setOutId($value['id']);
@@ -136,10 +137,13 @@ class DefaultController extends Controller
             $dm->persist($task);
         }
         $dm->flush();
+            $resp['success'] = true;
+        } catch(\Exception $e) {
+            $resp['error'] = $e->getMessage();
+        }
 
-        return new JsonResponse($data);
+        return new JsonResponse($resp);
     }
-
 
     /**
      * @Route("/istio/{name}")
@@ -213,8 +217,18 @@ class DefaultController extends Controller
      */
     public function getAction($id)
     {
+        $resp = array();
         $dm = $this->get('doctrine_mongodb')->getManager();
-        $tasks = $dm->getRepository('AcmeStoreBundle:Task')->findBy(array('outId'=>(int)$id));
+        $tasks = $dm->getRepository('AcmeStoreBundle:Task')->findBy(
+            array(
+                'outId'=>(int)$id,
+                'status' => Task::STATUS_DONE
+            ));
+
+        $tasksAll = $dm->getRepository('AcmeStoreBundle:Task')->findBy(
+            array(
+                'outId'=>(int)$id
+            ));
 
         $result = array();
         foreach ($tasks as $task) {/** @var Task $task */
@@ -226,11 +240,13 @@ class DefaultController extends Controller
             );
         }
 
-        echo '<pre>';
-        var_dump($result);
-        exit;
+        if (!$tasks || count($tasksAll) > count($tasks) ) {
+            $resp['error'] = 'Empty or not isset';
+        } else {
+            $resp['data'] = $result;
+            $resp['success'] = true;
+        }
 
-        return new JsonResponse();
+        return new JsonResponse($resp);
     }
-
 }

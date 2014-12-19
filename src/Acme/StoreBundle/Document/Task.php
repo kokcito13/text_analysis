@@ -99,7 +99,7 @@ class Task
         $this->countKey = 0;
 
         $this->status = self::STATUS_CREATE;
-        $this->status_morphology = self::DEFAULT_IN;
+        $this->status_morphology = self::MORPHOLOGY_DONE;
         $this->status_urls = self::DEFAULT_IN;
     }
     

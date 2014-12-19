@@ -29,7 +29,7 @@ class UpdateTask {
         $this->updateStatusUrls();
         $this->setLengthTextUrls();
         $this->setCountKey();
-        $this->setMorphologyKeys();
+//        $this->setMorphologyKeys();
     }
 
     public function updateStatusUrls()
@@ -84,6 +84,7 @@ class UpdateTask {
             $counts = $this->getCountsKey($task->getUrls(), $task->getKey());
             $task->setCountKey($counts);
             $task->setStatus(Task::STATUS_SAVE_COUNT_KEY);
+            $task->setStatus(Task::STATUS_DONE);
             $this->dm->persist($task);
         }
 
