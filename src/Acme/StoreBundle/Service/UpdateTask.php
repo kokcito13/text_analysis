@@ -40,8 +40,18 @@ class UpdateTask {
         $qb->addOr($qb->expr()->field('status_urls')->exists(false));
         $qb->limit(10);
 
+//        $tasks =  $this->dm
+//            ->createQueryBuilder('AcmeStoreBundle:Task')
+//            ->field('status_urls')->equals(Task::DEFAULT_IN)
+//            ->limit(10)
+//            ->getQuery()
+//            ->execute();
+
         $tasks = $qb->getQuery()->execute();
+        if (count($tasks) == 0) return;
         foreach ($tasks as $task) {/** @var Task $task */
+            echo count($task->getUrlsWithContent())." == ".count($task->getUrls())." , ";
+
             if (count($task->getUrlsWithContent()) == count($task->getUrls())) {
                 $task->setStatusUrls(Task::URLS_PARSE_FINISH);
                 $this->dm->persist($task);

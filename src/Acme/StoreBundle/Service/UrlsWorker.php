@@ -29,7 +29,7 @@ class UrlsWorker {
             ->limit(10)
             ->getQuery()
             ->execute();
-
+        if (count($urls) == 0) return;
         foreach ($urls as $url) { /** @var URl $url */
             $context = stream_context_create(array(
                 'http' => array(
@@ -65,7 +65,7 @@ class UrlsWorker {
             ->limit(10)
             ->getQuery()
             ->execute();
-
+        if (count($urls) == 0) return;
         foreach ($urls as $url) { /** @var URl $url */
             $uri = preg_replace('/https|http:\/\//iu','',$url->getUri());
             $postData = http_build_query(
@@ -89,7 +89,7 @@ class UrlsWorker {
             $crawler->addContent($res, 'html');
 
             $content = $crawler->filter('#ContentForm_content')->text();
-            $content = preg_replace('\r','',$content);
+//            $content = preg_replace('\\r','',$content);
 
             $url->setContent(str_replace(PHP_EOL, ' ', $content));
             $url->setStatus(Url::STATUS_WITH_CONTENT);
