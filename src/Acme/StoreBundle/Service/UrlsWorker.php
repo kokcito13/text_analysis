@@ -29,7 +29,7 @@ class UrlsWorker {
             ->limit(10)
             ->getQuery()
             ->execute();
-        if (count($urls) == 0) return;
+        if (!is_array($urls)) return;
         foreach ($urls as $url) { /** @var URl $url */
             $context = stream_context_create(array(
                 'http' => array(
@@ -65,8 +65,8 @@ class UrlsWorker {
             ->limit(10)
             ->getQuery()
             ->execute();
-        if (count($urls) == 0) return;
-        foreach ($urls as $url) { /** @var URl $url */
+        if (!is_array($urls)) return;
+        foreach ($urls as $url) { /** @var Url $url */
             $uri = preg_replace('/https|http:\/\//iu','',$url->getUri());
             $postData = http_build_query(
                 array(

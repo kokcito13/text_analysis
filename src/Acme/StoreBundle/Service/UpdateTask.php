@@ -48,7 +48,7 @@ class UpdateTask {
 //            ->execute();
 
         $tasks = $qb->getQuery()->execute();
-        if (count($tasks) == 0) return;
+        if (!is_array($tasks)) return;
         foreach ($tasks as $task) {/** @var Task $task */
             echo count($task->getUrlsWithContent())." == ".count($task->getUrls())." , ";
 
@@ -70,6 +70,7 @@ class UpdateTask {
             ->limit(10);
 
         $tasks = $qb->getQuery()->execute();
+        if (!is_array($tasks)) return;
         foreach ($tasks as $task) {/** @var Task $task */
             $textLength = $this->getLengthFromUrls($task->getUrls());
             if ($textLength > 0) {
@@ -90,6 +91,7 @@ class UpdateTask {
             ->limit(10);
 
         $tasks = $qb->getQuery()->execute();
+        if (!is_array($tasks)) return;
         foreach ($tasks as $task) {/** @var Task $task */
             $counts = $this->getCountsKey($task->getUrls(), $task->getKey());
             $task->setCountKey($counts);
