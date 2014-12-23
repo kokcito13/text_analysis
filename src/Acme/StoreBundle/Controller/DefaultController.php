@@ -249,4 +249,66 @@ class DefaultController extends Controller
 
         return new JsonResponse($resp);
     }
+
+    /**
+     * @Route("/get_full/{id}", name="get_full_by_out_id")
+     */
+    public function getFullAction($id)
+    {
+        $resp = array();
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $tasks = $dm->getRepository('AcmeStoreBundle:Task')->findBy(
+            array(
+                'outId'=>(int)$id,
+                'status' => Task::STATUS_DONE
+            ));
+
+        $tasksAll = $dm->getRepository('AcmeStoreBundle:Task')->findBy(
+            array(
+                'outId'=>(int)$id
+            ));
+
+        $result = array();
+        if (is_array($tasks)) {
+            foreach ($tasks as $task) {/** @var Task $task */
+                $keys = explode(' ', $task->getKey());
+                $urls = array();
+                $urlArray = $task->getUrls();
+                if (is_array($urlArray)) {
+                    $i = 0;
+                    foreach ($urlArray as $url) {/** @var Url $url */
+                        $urls[$i]['keys'] = array();
+                        $content = $url->getContent();
+                        $urls[$i] = array(
+                            'length' => strlen($content),
+                        );
+                        foreach ($keys as $key) {
+                            $urls[$i]['keys'][] = array(
+                                'name' => $key,
+                                'count' => strpos($key, $content)
+                            );
+                        }
+                    }
+                }
+                $result[] = array (
+                    'key' => $task->getKey(),
+                    'status' => $task->getStatus(),
+                    'text_length' => $task->getTextLength(),
+                    'count_key' => $task->getCountKey(),
+                    'urls' => $urls
+                );
+            }
+        }
+echo '<pre>';
+var_dump($result);
+exit;
+        if (!$tasks || count($tasksAll) > count($tasks) ) {
+            $resp['error'] = 'Empty or not isset';
+        } else {
+            $resp['data'] = $result;
+            $resp['success'] = true;
+        }
+
+        return new JsonResponse($resp);
+    }
 }
