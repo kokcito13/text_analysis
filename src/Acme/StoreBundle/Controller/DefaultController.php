@@ -97,6 +97,7 @@ class DefaultController extends Controller
     {
         $dm = $this->get('doctrine_mongodb')->getManager();
         $data = (array)$request->request->all();
+
         $resp = array();
         try {
         foreach ($data as $value) {
