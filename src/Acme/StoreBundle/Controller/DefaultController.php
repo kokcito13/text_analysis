@@ -264,42 +264,55 @@ class DefaultController extends Controller
                 'status' => Task::STATUS_DONE
             ));
 
-        $tasksAll = $dm->getRepository('AcmeStoreBundle:Task')->findBy(
-            array(
-                'outId'=>(int)$id
-            ));
+//        $tasksAll = $dm->getRepository('AcmeStoreBundle:Task')->findBy(
+//            array(
+//                'outId'=>(int)$id
+//            ));
 
         $result = array();
-        if (is_array($tasks)) {
+        if ($tasks) {
             foreach ($tasks as $task) {/** @var Task $task */
                 $keys = explode(' ', $task->getKey());
                 $urls = array();
                 $urlArray = $task->getUrls();
-                if (is_array($urlArray)) {
+                if ($urlArray) {
                     $i = 0;
                     foreach ($urlArray as $url) {/** @var Url $url */
+                        $urls[$i] = array();
+                        $urls[$i]['url'] = $url->getUri();
                         $urls[$i]['keys'] = array();
+
                         $content = $url->getContent();
                         $urls[$i] = array(
                             'length' => strlen($content),
                         );
+
+                        $urls[$i]['key'] = array(
+                            'name' => $task->getKey(),
+                            'count' => $this->getKeyCount($task->getKey(), $content)
+                        );
+
                         foreach ($keys as $key) {
                             $urls[$i]['keys'][] = array(
                                 'name' => $key,
-                                'count' => strpos($key, $content)
+                                'count' => $this->getKeyCount($key, $content)
                             );
                         }
+                        $i++;
                     }
                 }
                 $result[] = array (
                     'key' => $task->getKey(),
-                    'status' => $task->getStatus(),
+//                    'status' => $task->getStatus(),
                     'text_length' => $task->getTextLength(),
                     'count_key' => $task->getCountKey(),
                     'urls' => $urls
                 );
             }
         }
+
+
+
 echo '<pre>';
 var_dump($result);
 exit;
@@ -311,5 +324,38 @@ exit;
         }
 
         return new JsonResponse($resp);
+    }
+
+    public function getKeyCount($key, $content)
+    {
+        $reg = '/(?<!\pL)';
+        $reg .= $this->makeRegInSideKey($key);
+        $reg .= '(?!\pL)/iu';
+
+        $matches = array();
+        $q = preg_match_all($reg, $content, $matches);
+
+        return $q;
+    }
+
+    private function makeRegInSideKey($key)
+    {
+        $key = mb_strtolower($key, 'utf8');
+        $key = str_replace('ё', 'е', $key);
+
+        $newKey = '';
+        $partKey = explode(' ', $key);
+        foreach($partKey as $kk=>$vv) {
+            if ( ($kk+1) == count($partKey)) {
+                $newKey .= $vv;
+            } else {
+                $newKey .= $vv.'[ .()-:]?\s*';
+            }
+        }
+        if (empty($newKey)) {
+            $newKey = $key;
+        }
+
+        return $newKey;
     }
 }
