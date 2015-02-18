@@ -40,15 +40,8 @@ class UpdateTask {
         $qb->addOr($qb->expr()->field('status_urls')->exists(false));
         $qb->limit(10);
 
-//        $tasks =  $this->dm
-//            ->createQueryBuilder('AcmeStoreBundle:Task')
-//            ->field('status_urls')->equals(Task::DEFAULT_IN)
-//            ->limit(10)
-//            ->getQuery()
-//            ->execute();
-
         $tasks = $qb->getQuery()->execute();
-        if (!is_array($tasks)) return;
+        if (!$tasks || count($tasks) < 1) return;
         foreach ($tasks as $task) {/** @var Task $task */
             echo count($task->getUrlsWithContent())." == ".count($task->getUrls())." , ";
 
@@ -70,7 +63,7 @@ class UpdateTask {
             ->limit(10);
 
         $tasks = $qb->getQuery()->execute();
-        if (!is_array($tasks)) return;
+        if (!$tasks || count($tasks) < 1) return;
         foreach ($tasks as $task) {/** @var Task $task */
             $textLength = $this->getLengthFromUrls($task->getUrls());
             if ($textLength > 0) {
@@ -91,7 +84,7 @@ class UpdateTask {
             ->limit(10);
 
         $tasks = $qb->getQuery()->execute();
-        if (!is_array($tasks)) return;
+        if (!$tasks || count($tasks) < 1) return;
         foreach ($tasks as $task) {/** @var Task $task */
             $counts = $this->getCountsKey($task->getUrls(), $task->getKey());
             $task->setCountKey($counts);

@@ -29,23 +29,29 @@ class UrlsWorker {
             ->limit(10)
             ->getQuery()
             ->execute();
-        if (!is_array($urls)) return;
+
+        if (!$urls || count($urls) < 1) return;
+
         foreach ($urls as $url) { /** @var URl $url */
-            $context = stream_context_create(array(
-                'http' => array(
-                    'method' => 'GET',
-                    'header' => 'Content-Type: application/x-www-form-urlencoded' . PHP_EOL,
-                    'timeout' => 120
-                ),
-            ));
+//            $context = stream_context_create(array(
+//                'http' => array(
+//                    'method' => 'GET',
+//                    'header' => 'Content-Type: application/x-www-form-urlencoded' . PHP_EOL,
+//                    'timeout' => 120
+//                ),
+//            ));
 
             $url->setHtml("NOT CORRECT URL");
             if (filter_var($url->getUri(), FILTER_VALIDATE_URL)) {
-                $res = file_get_contents($url->getUri(), false, $context);
+                $res = $this->file_get_contents_curl($url->getUri());
 
-                $crawler = new Crawler();
-                $crawler->addContent($res, 'html');
-                $url->setHtml($crawler->html());
+                try {
+                    $crawler = new Crawler();
+                    $crawler->addContent($res, 'html');
+                    $url->setHtml($crawler->html());
+                } catch (\Exception $e) {
+                    $url->setHtml("NOT CORRECT URL");
+                }
             }
 
             $url->setStatus(Url::STATUS_WITH_HTML);
@@ -65,7 +71,7 @@ class UrlsWorker {
             ->limit(10)
             ->getQuery()
             ->execute();
-        if (!is_array($urls)) return;
+        if (!$urls || count($urls) < 1) return;
         foreach ($urls as $url) { /** @var Url $url */
             $uri = preg_replace('/https|http:\/\//iu','',$url->getUri());
             $postData = http_build_query(
@@ -82,13 +88,13 @@ class UrlsWorker {
                 ),
             ));
 
-            sleep(5);
+            sleep(2);
             $res = file_get_contents('http://istio.com/rus/text/analyz/', true, $context);
 
             $crawler = new Crawler();
             $crawler->addContent($res, 'html');
 
-            $content = $crawler->filter('#ContentForm_content')->text();
+            $content = $crawler->filter('#htmlContent')->text();
 //            $content = preg_replace('\\r','',$content);
 
             $url->setContent(str_replace(PHP_EOL, ' ', $content));
@@ -98,5 +104,21 @@ class UrlsWorker {
             echo $url->getId().',';
         }
         $this->dm->flush();
+    }
+
+
+    private function file_get_contents_curl($url) {
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+
+        $data = curl_exec($ch);
+        curl_close($ch);
+
+        return $data;
     }
 } 
