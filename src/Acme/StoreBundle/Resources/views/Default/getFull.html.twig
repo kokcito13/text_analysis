@@ -1,0 +1,59 @@
+<html>
+    <head>
+        <style>
+            table td {
+                border-bottom: 1px solid black;
+                padding-bottom: 3px;
+            }
+        </style>
+    </head>
+    <body>
+        {#{{ dump(result) }}#}
+        {% for key in result %}
+            <table>
+                <tr>
+                    <td>
+                        {{ key.key }}
+                    </td>
+                    <td>Среднее: </td>
+                    <td>
+                        {{ key.text_length }}
+                    </td>
+                    <td>
+                        {{ key.count_key }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>УРЛ</b>
+                    </td>
+                    <td><b>Длинна текста</b></td>
+                    <td>
+                        <b>Точных вхождений</b>
+                    </td>
+                    <td>
+                        <b>Част. вхождения</b>
+                    </td>
+                </tr>
+                {% for url in key.urls %}
+                    <tr>
+                        <td>
+                            {{ url.url }}
+                        </td>
+                        <td>
+                            {{ url.length }}
+                        </td>
+                        <td>
+                            {{ url.key.count }}
+                        </td>
+                        <td>
+                            {% for k in url.keys %}
+                                {{ k.name }} ({{ k.count }})<br/>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endfor %}
+    </body>
+</html>

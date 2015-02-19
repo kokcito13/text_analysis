@@ -91,7 +91,6 @@ class DefaultController extends Controller
 
     /**
      * @Route("/take_info", name="take_info")
-     * @Method("POST")
      */
     public function saveInfoAction(Request $request)
     {
@@ -253,6 +252,7 @@ class DefaultController extends Controller
 
     /**
      * @Route("/get_full/{id}", name="get_full_by_out_id")
+     * @Template()
      */
     public function getFullAction($id)
     {
@@ -263,11 +263,6 @@ class DefaultController extends Controller
                 'outId'=>(int)$id,
                 'status' => Task::STATUS_DONE
             ));
-
-//        $tasksAll = $dm->getRepository('AcmeStoreBundle:Task')->findBy(
-//            array(
-//                'outId'=>(int)$id
-//            ));
 
         $result = array();
         if ($tasks) {
@@ -283,9 +278,7 @@ class DefaultController extends Controller
                         $urls[$i]['keys'] = array();
 
                         $content = $url->getContent();
-                        $urls[$i] = array(
-                            'length' => strlen($content),
-                        );
+                        $urls[$i]['length'] = strlen($content);
 
                         $urls[$i]['key'] = array(
                             'name' => $task->getKey(),
@@ -309,21 +302,13 @@ class DefaultController extends Controller
                     'urls' => $urls
                 );
             }
-        }
-
-
-
-echo '<pre>';
-var_dump($result);
-exit;
-        if (!$tasks || count($tasksAll) > count($tasks) ) {
-            $resp['error'] = 'Empty or not isset';
         } else {
-            $resp['data'] = $result;
-            $resp['success'] = true;
+            echo '<pre>';
+            var_dump("NOT IN");
+            exit;
         }
 
-        return new JsonResponse($resp);
+        return array('result'=>$result);
     }
 
     public function getKeyCount($key, $content)
