@@ -105,7 +105,12 @@ class DefaultController extends Controller
             $task->setKey($value['key']);
             foreach ($value['urls'] as $url) {
                 $url = trim($url);
-                $host = parse_url($url, PHP_URL_HOST);
+//                $host = parse_url($url, PHP_URL_HOST);
+
+                preg_match('@^(?:https?://)?([^/]+)@i',
+                    $url, $matches);
+                $host = $matches[1];
+
                 $site = $dm->getRepository('AcmeStoreBundle:Site')->findOneByName($host);
                 if (!$site) {
                     $site = new Site();
@@ -115,7 +120,7 @@ class DefaultController extends Controller
                     $site->addUrl($urlDocument);
                     $urlDocument->setSite($site);
                 } else {
-                    $urlDocument = $site->findUrlByUri($url);
+                    $urlDocument = $site->findOneUrlByUri($url);
                     if ($urlDocument) {
                         $timeStamp = $urlDocument->getUpdatedAt();
                         $timeTwoWeeks = time()-(14+24+3600);
@@ -131,12 +136,13 @@ class DefaultController extends Controller
                 }
                 $urlDocument->setTask($task);
                 $task->addUrl($urlDocument);
+
                 $dm->persist($urlDocument);
                 $dm->persist($site);
             }
             $dm->persist($task);
         }
-        $dm->flush();
+//        $dm->flush();
             $resp['success'] = true;
         } catch(\Exception $e) {
             $resp['error'] = $e->getMessage();
