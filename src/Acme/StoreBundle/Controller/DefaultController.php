@@ -120,11 +120,15 @@ class DefaultController extends Controller
                     $site->addUrl($urlDocument);
                     $urlDocument->setSite($site);
                 } else {
-                    $urlDocument = $site->findOneUrlByUri($url);
+                    $urlDocument = $site->findUrlByUri($url);
                     if ($urlDocument) {
                         $timeStamp = $urlDocument->getUpdatedAt();
                         $timeTwoWeeks = time()-(14+24+3600);
-                        if ($timeTwoWeeks > $timeStamp->__toString()) {
+                        $strTime = $timeStamp;
+                        if (!is_integer($strTime)) {
+                            $strTime = $timeStamp->__toString();
+                        }
+                        if ($timeTwoWeeks > $strTime) {
                             $urlDocument->setStatus(Url::STATUS_CREATE);
                         }
                     } else {
@@ -142,7 +146,7 @@ class DefaultController extends Controller
             }
             $dm->persist($task);
         }
-//        $dm->flush();
+        $dm->flush();
             $resp['success'] = true;
         } catch(\Exception $e) {
             $resp['error'] = $e->getMessage();

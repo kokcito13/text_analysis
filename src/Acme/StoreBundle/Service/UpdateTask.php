@@ -189,7 +189,10 @@ class UpdateTask {
             unset($length[$count-1]);
         }
 
-        $num = array_sum($length)/count($length);
+        $num = 0 ;
+        if (array_sum($length) > 0) {
+            $num = array_sum($length)/count($length);
+        }
 
         return $num;
     }
