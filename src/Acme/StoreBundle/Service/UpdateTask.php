@@ -43,7 +43,7 @@ class UpdateTask {
         $tasks = $qb->getQuery()->execute();
         if (!$tasks || count($tasks) < 1) return;
         foreach ($tasks as $task) {/** @var Task $task */
-            echo count($task->getUrlsWithContent())." == ".count($task->getUrls())." , ";
+//            echo count($task->getUrlsWithContent())." == ".count($task->getUrls())." , ";
 
             if (count($task->getUrlsWithContent()) == count($task->getUrls())) {
                 $task->setStatusUrls(Task::URLS_PARSE_FINISH);

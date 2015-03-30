@@ -105,10 +105,16 @@ class DefaultController extends Controller
             $task->setKey($value['key']);
             foreach ($value['urls'] as $url) {
                 $url = trim($url);
+                if (empty($url))
+                    continue;
 //                $host = parse_url($url, PHP_URL_HOST);
 
                 preg_match('@^(?:https?://)?([^/]+)@i',
                     $url, $matches);
+
+//                var_dump($url);
+//                var_dump($matches);
+//                exit;
                 $host = $matches[1];
 
                 $site = $dm->getRepository('AcmeStoreBundle:Site')->findOneByName($host);
